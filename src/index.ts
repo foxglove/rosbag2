@@ -1,1 +1,2 @@
-export * from "./Rosbag2Reader";
+export * from "./Rosbag2";
+export * from "./types";
