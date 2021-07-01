@@ -2,7 +2,7 @@ import { Time, fromNanoSec, toNanoSec } from "@foxglove/rostime";
 import SQLite from "better-sqlite3";
 
 import { MessageIterator, MessageRow } from "../MessageIterator";
-import { parseQosProfiles } from "../parseQosProfiles";
+import { parseQosProfiles } from "../metadata";
 import type { RawMessage, SqliteDb, SqliteMessageReadOptions, TopicDefinition } from "../types";
 
 type DbContext = {

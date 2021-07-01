@@ -1,4 +1,5 @@
 import { Filelike, Rosbag2 } from "..";
+import { SqliteSqljs } from "./SqliteSqljs";
 
 export class Reader implements Filelike {
   private blob_: Blob;
@@ -9,8 +10,11 @@ export class Reader implements Filelike {
     this.size_ = blob.size;
   }
 
-  read(offset: number, length: number): Promise<Uint8Array> {
+  read(offset?: number, length?: number): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
+      offset ??= 0;
+      length ??= Math.max(0, this.size_ - offset);
+
       const reader = new FileReader();
       reader.onload = function () {
         reader.onload = null;
@@ -26,18 +30,44 @@ export class Reader implements Filelike {
     });
   }
 
+  readAsText(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = function () {
+        reader.onload = null;
+        reader.onerror = null;
+        resolve(reader.result as string);
+      };
+      reader.onerror = function () {
+        reader.onload = null;
+        reader.onerror = null;
+        reject(reader.error ?? new Error(`Unknown FileReader error`));
+      };
+      reader.readAsText(this.blob_, "utf8");
+    });
+  }
+
   size(): Promise<number> {
     return Promise.resolve(this.size_);
   }
 }
 
-export async function open(folder: FileSystemDirectoryEntry): Promise<Rosbag2> {
+export async function open(
+  folder: FileSystemDirectoryEntry,
+  locateSqlJsWasm?: (file: string) => string,
+): Promise<Rosbag2> {
   const files = await listFiles(folder);
   const entries = files.map((file) => ({
     relativePath: file.webkitRelativePath,
     file: new Reader(file),
   }));
-  return new Rosbag2(folder.fullPath, entries);
+  const bag = new Rosbag2(
+    folder.fullPath,
+    entries,
+    (fileEntry) => new SqliteSqljs(fileEntry.file, locateSqlJsWasm),
+  );
+  await bag.open();
+  return bag;
 }
 
 async function listFiles(folder: FileSystemDirectoryEntry): Promise<File[]> {

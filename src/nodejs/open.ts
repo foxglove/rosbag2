@@ -1,7 +1,8 @@
-import { FileHandle, open as fopen, readdir } from "fs/promises";
+import { FileHandle, open as fopen, readdir, readFile } from "fs/promises";
 import path from "path";
 
 import { Filelike, Rosbag2 } from "..";
+import { SqliteNodejs } from "./SqliteNodejs";
 
 export class Reader implements Filelike {
   static DEFAULT_BUFFER_SIZE = 1024 * 16;
@@ -16,8 +17,10 @@ export class Reader implements Filelike {
     this.buffer_ = new Uint8Array(Reader.DEFAULT_BUFFER_SIZE);
   }
 
-  async read(offset: number, length: number): Promise<Uint8Array> {
+  async read(offset?: number, length?: number): Promise<Uint8Array> {
     const handle = this.handle_ ?? (await this.open());
+    offset ??= 0;
+    length ??= Math.max(0, (this.size_ ?? 0) - offset);
 
     if (length > this.buffer_.byteLength) {
       const newSize = Math.max(this.buffer_.byteLength * 2, length);
@@ -28,6 +31,10 @@ export class Reader implements Filelike {
     return this.buffer_.byteLength === length
       ? this.buffer_
       : new Uint8Array(this.buffer_.buffer, 0, length);
+  }
+
+  async readAsText(): Promise<string> {
+    return readFile(this.filename, { encoding: "utf8" });
   }
 
   async size(): Promise<number> {
@@ -61,7 +68,13 @@ export async function open(folder: string): Promise<Rosbag2> {
     relativePath: filename,
     file: new Reader(path.join(folder, filename)),
   }));
-  return new Rosbag2(folder, entries);
+  const bag = new Rosbag2(
+    folder,
+    entries,
+    (fileEntry) => new SqliteNodejs(path.join(folder, fileEntry.relativePath)),
+  );
+  await bag.open();
+  return bag;
 }
 
 async function listFiles(baseDir: string, dirname: string): Promise<string[]> {

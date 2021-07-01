@@ -2,8 +2,14 @@ import { Time, fromNanoSec, toNanoSec } from "@foxglove/rostime";
 import initSqlJs, { Database, Statement } from "sql.js";
 
 import { MessageIterator, MessageRow } from "../MessageIterator";
-import { parseQosProfiles } from "../parseQosProfiles";
-import type { RawMessage, SqliteDb, SqliteMessageReadOptions, TopicDefinition } from "../types";
+import { parseQosProfiles } from "../metadata";
+import type {
+  Filelike,
+  RawMessage,
+  SqliteDb,
+  SqliteMessageReadOptions,
+  TopicDefinition,
+} from "../types";
 
 type DbContext = {
   db: Database;
@@ -22,11 +28,11 @@ type TopicRowArray = [
 type MessageRowArray = [topic_id: number, timestamp: number, data: Uint8Array];
 
 export class SqliteSqljs implements SqliteDb {
-  readonly file: Readonly<Blob>;
+  readonly file: Readonly<Filelike>;
   private locateSqlJsWasm: (file: string) => string;
   private context?: DbContext;
 
-  constructor(file: Blob, locateSqlJsWasm?: (file: string) => string) {
+  constructor(file: Filelike, locateSqlJsWasm?: (file: string) => string) {
     this.file = file;
     this.locateSqlJsWasm = locateSqlJsWasm ?? ((f) => `https://sql.js.org/dist/${f}`);
   }
@@ -34,7 +40,7 @@ export class SqliteSqljs implements SqliteDb {
   async open(): Promise<void> {
     const SQL = await initSqlJs({ locateFile: this.locateSqlJsWasm });
 
-    const data = await this.file.arrayBuffer();
+    const data = await this.file.read();
     const db = new SQL.Database(new Uint8Array(data));
 
     // Retrieve all of the topics

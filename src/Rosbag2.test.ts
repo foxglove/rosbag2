@@ -1,11 +1,13 @@
 import path from "path";
 
 import { Rosbag2 } from "./Rosbag2";
+import { SqliteNodejs } from "./nodejs";
 import { open } from "./nodejs/open";
 
 describe("Rosbag2", () => {
-  it("fails when missing metadata.yaml", () => {
-    expect(() => new Rosbag2(".", [])).toThrow();
+  it("fails when missing metadata.yaml", async () => {
+    const bag = new Rosbag2(".", [], (fileEntry) => new SqliteNodejs(fileEntry.relativePath));
+    await expect(bag.open()).rejects.toBeDefined();
   });
 
   it("reads a simple bag file", async () => {

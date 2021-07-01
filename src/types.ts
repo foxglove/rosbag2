@@ -1,23 +1,65 @@
-import { Time } from "@foxglove/rostime";
+import { Duration, Time } from "@foxglove/rostime";
+
+export enum QosPolicyDurability {
+  SystemDefault = 0,
+  TransientLocal = 1,
+  Volatile = 2,
+  Unknown = 3,
+}
+
+export enum QosPolicyHistory {
+  SystemDefault = 0,
+  KeepLast = 1,
+  KeepAll = 2,
+  Unknown = 3,
+}
+
+export enum QosPolicyLiveliness {
+  SystemDefault = 0,
+  Automatic = 1,
+  ManualByTopic = 3,
+  Unknown = 4,
+}
+
+export enum QosPolicyReliability {
+  SystemDefault = 0,
+  Reliable = 1,
+  BestEffort = 2,
+  Unknown = 3,
+}
+
+// Bag metadata
+
+export type Metadata = {
+  version?: number;
+  storageIdentifier?: "sqlite3" | string;
+  relativeFilePaths: string[];
+  duration?: Duration;
+  startingTime?: Time;
+  messageCount?: number;
+  topicsWithMessageCount: { topic: TopicDefinition; messageCount: number }[];
+  compressionFormat?: string;
+  compressionMode?: string;
+};
 
 // Topic and Message interfaces
 
 export type QosProfile = {
-  history: number;
+  history: QosPolicyHistory;
   depth: number;
-  reliability: boolean;
-  durability: boolean;
-  deadline?: Time;
-  lifespan?: Time;
-  liveliness: boolean;
-  livelinessLeaseDuration?: Time;
+  reliability: QosPolicyReliability;
+  durability: QosPolicyDurability;
+  deadline?: Duration;
+  lifespan?: Duration;
+  liveliness: QosPolicyLiveliness;
+  livelinessLeaseDuration?: Duration;
   avoidRosNamespaceConventions: boolean;
 };
 
 export type TopicDefinition = {
   name: string;
   type: string;
-  serializationFormat: string;
+  serializationFormat: "cdr" | string;
   offeredQosProfiles: QosProfile[];
 };
 
@@ -30,7 +72,8 @@ export type RawMessage = {
 // Filesystem interfaces
 
 export interface Filelike {
-  read(offset: number, length: number): Promise<Uint8Array>;
+  read(offset?: number, length?: number): Promise<Uint8Array>;
+  readAsText(): Promise<string>;
   size(): Promise<number>;
 }
 
