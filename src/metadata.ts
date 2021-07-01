@@ -17,6 +17,11 @@ type TopicAndCount = { topic: TopicDefinition; messageCount: number };
 const TIME_ZERO: Time = { sec: 0, nsec: 0 };
 const DURATION_INFINITY: Duration = { sec: 2147483647, nsec: 4294967295 };
 
+/**
+ * Parses rosbag2 metadata.yaml file contents into a Metadata object.
+ * @param data A YAML string from a metadata.yaml file
+ * @returns Parsed rosbag2 metadata on success, otherwise undefined
+ */
 export function parseMetadata(data: string): Metadata | undefined {
   const parsed = parseYaml(data) as Obj | undefined;
   if (parsed == undefined) {
@@ -60,6 +65,34 @@ export function parseMetadata(data: string): Metadata | undefined {
   };
 }
 
+/**
+ * Parses a YAML string into a list of ROS2 QoS profiles. Missing values will be filled in with
+ * rosbag2 QoS defaults.
+ *
+ * These are the default values for QoS profile fields, according to
+ * <https://github.com/ros2/rosbag2/blob/master/README.md#overriding-qos-profiles>
+ *
+ *   history: keep_last
+ *   depth: 10
+ *   reliability: reliable
+ *   durability: volatile
+ *   deadline:
+ *     # unspecified/infinity
+ *     sec: 0
+ *     nsec: 0
+ *   lifespan:
+ *     # unspecified/infinity
+ *     sec: 0
+ *     nsec: 0
+ *   liveliness: system_default
+ *   liveliness_lease_duration:
+ *     # unspecified/infinity
+ *     sec: 0
+ *     nsec: 0
+ * avoid_ros_namespace_conventions: false
+ * @param data A string in YAML format
+ * @returns A list of parsed QoS profiles
+ */
 export function parseQosProfiles(data: string): QosProfile[] {
   const parsed = parseYaml(data);
   return Array.isArray(parsed) ? getQosProfiles(parsed) : [];
