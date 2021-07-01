@@ -36,9 +36,11 @@ export class SqliteNodejs implements SqliteDb {
 
     const db = new SQLite(this.filename, { fileMustExist: true, readonly: true });
     db.defaultSafeIntegers(); // return bigints by default
-    const timeRangeStatement = db.prepare("select min(timestamp), max(timestamp) from messages");
+    const timeRangeStatement = db.prepare(
+      "select min(timestamp) as start, max(timestamp) as end from messages",
+    );
     const messageCountsStatement = db.prepare(`
-      select topics.name,count(*)
+      select topics.name as name,count(*) as count
       from messages
       inner join topics on messages.topic_id = topics.id
       group by topics.id`);
@@ -122,9 +124,11 @@ export class SqliteNodejs implements SqliteDb {
         args.push(topicIds[0]!);
       } else {
         if (args.length === 0) {
-          query += ` where topic_id in (${args.map(() => "?").join(",")})`;
-          args = args.concat(topicIds);
+          query += ` where topic_id in (${topicIds.map(() => "?").join(",")})`;
+        } else {
+          query += ` and topic_id in (${topicIds.map(() => "?").join(",")})`;
         }
+        args = args.concat(topicIds);
       }
     }
 
@@ -137,18 +141,18 @@ export class SqliteNodejs implements SqliteDb {
     if (this.context == undefined) {
       throw new Error(`Call open() before retrieving the time range`);
     }
-    const [minNsec, maxNsec] = this.context.timeRangeStatement.get() as [bigint, bigint];
-    return Promise.resolve([fromNanoSec(minNsec), fromNanoSec(maxNsec)]);
+    const res = this.context.timeRangeStatement.get() as { start: bigint; end: bigint };
+    return Promise.resolve([fromNanoSec(res.start), fromNanoSec(res.end)]);
   }
 
   messageCounts(): Promise<Map<string, number>> {
     if (this.context == undefined) {
       throw new Error(`Call open() before retrieving message counts`);
     }
-    const rows = this.context.messageCountsStatement.all() as [string, bigint][];
+    const rows = this.context.messageCountsStatement.all() as { name: string; count: bigint }[];
     const counts = new Map<string, number>();
-    for (const [topicName, count] of rows) {
-      counts.set(topicName, Number(count));
+    for (const { name, count } of rows) {
+      counts.set(name, Number(count));
     }
     return Promise.resolve(counts);
   }

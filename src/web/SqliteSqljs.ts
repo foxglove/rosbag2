@@ -112,9 +112,11 @@ export class SqliteSqljs implements SqliteDb {
         args.push(topicIds[0]!);
       } else {
         if (args.length === 0) {
-          query += ` where topic_id in (${args.map(() => "?").join(",")})`;
-          args = args.concat(topicIds);
+          query += ` where topic_id in (${topicIds.map(() => "?").join(",")})`;
+        } else {
+          query += ` and topic_id in (${topicIds.map(() => "?").join(",")})`;
         }
+        args = args.concat(topicIds);
       }
     }
 
