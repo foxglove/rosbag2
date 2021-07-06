@@ -1,42 +1,41 @@
-import { fromNanoSec } from "@foxglove/rostime";
+import type { Message, RawMessage } from "./types";
 
-import type { RawMessage, TopicDefinition } from "./types";
+type MessageDecoder = (rawMessage: RawMessage) => unknown;
+export class MessageIterator implements AsyncIterableIterator<Message> {
+  private rowIterators: AsyncIterableIterator<RawMessage>[];
+  private decoder?: MessageDecoder;
 
-export type MessageRow = {
-  topic_id: bigint;
-  timestamp: bigint;
-  data: Uint8Array;
-};
-
-export class MessageIterator implements AsyncIterableIterator<RawMessage> {
-  private dbIterator: IterableIterator<MessageRow>;
-  private topicsMap: Map<bigint, TopicDefinition>;
-
-  constructor(dbIterator: IterableIterator<MessageRow>, topicsMap: Map<bigint, TopicDefinition>) {
-    this.dbIterator = dbIterator;
-    this.topicsMap = topicsMap;
+  constructor(rowIterators: AsyncIterableIterator<RawMessage>[], decoder?: MessageDecoder) {
+    this.rowIterators = rowIterators;
+    this.decoder = decoder;
   }
 
-  [Symbol.asyncIterator](): AsyncIterableIterator<RawMessage> {
+  [Symbol.asyncIterator](): AsyncIterableIterator<Message> {
     return this;
   }
 
-  async next(): Promise<IteratorResult<RawMessage>> {
-    const res = this.dbIterator.next();
-    if (res.done === true) {
-      return Promise.resolve({ value: undefined, done: true });
-    } else {
-      const row = res.value;
-
-      // Resolve topicId to a parsed topic row
-      const topic = this.topicsMap.get(row.topic_id);
-      if (topic == undefined) {
-        throw new Error(`Cannot find topic_id ${row.topic_id} in ${this.topicsMap.size} topics`);
+  async next(): Promise<IteratorResult<Message>> {
+    while (this.rowIterators.length > 0) {
+      const front = this.rowIterators[0]!;
+      const res = await front.next();
+      if (res.done === true) {
+        this.rowIterators.shift();
+        continue;
       }
 
-      const timestamp = fromNanoSec(row.timestamp);
-      const value: RawMessage = { topic, timestamp, data: row.data };
-      return Promise.resolve({ value, done: false });
+      const rawMessage = res.value;
+      if (this.decoder == undefined) {
+        return { value: rawMessage, done: false };
+      }
+
+      const value: Message = {
+        topic: rawMessage.topic,
+        timestamp: rawMessage.timestamp,
+        data: this.decoder(rawMessage),
+      };
+      return { value, done: false };
     }
+
+    return { value: undefined, done: true };
   }
 }

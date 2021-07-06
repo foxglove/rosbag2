@@ -28,6 +28,19 @@ export enum QosPolicyReliability {
   Unknown = 3,
 }
 
+export type Message = {
+  topic: Readonly<TopicDefinition>;
+  timestamp: Time;
+  data: unknown;
+};
+
+export type MessageReadOptions = {
+  topics?: string[];
+  startTime?: Time;
+  endTime?: Time;
+  rawMessages?: boolean;
+};
+
 // Bag metadata
 
 export type Metadata = {
@@ -84,16 +97,10 @@ export interface FileEntry {
 
 // Sqlite interfaces
 
-export type SqliteMessageReadOptions = {
-  topics?: string[];
-  startTime?: Time;
-  endTime?: Time;
-};
-
 export interface SqliteDb {
   open(): Promise<void>;
   readTopics(): Promise<TopicDefinition[]>;
-  readMessages(opts: SqliteMessageReadOptions): AsyncIterableIterator<RawMessage>;
+  readMessages(opts: MessageReadOptions): AsyncIterableIterator<RawMessage>;
   timeRange(): Promise<[min: Time, max: Time]>;
   messageCounts(): Promise<Map<string, number>>;
 }

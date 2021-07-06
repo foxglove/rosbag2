@@ -1,9 +1,9 @@
 import { Time, fromNanoSec, toNanoSec } from "@foxglove/rostime";
 import SQLite from "better-sqlite3";
 
-import { MessageIterator, MessageRow } from "../MessageIterator";
+import { RawMessageIterator, MessageRow } from "../RawMessageIterator";
 import { parseQosProfiles } from "../metadata";
-import type { RawMessage, SqliteDb, SqliteMessageReadOptions, TopicDefinition } from "../types";
+import type { RawMessage, SqliteDb, MessageReadOptions, TopicDefinition } from "../types";
 
 type DbContext = {
   db: SQLite.Database;
@@ -76,7 +76,7 @@ export class SqliteNodejs implements SqliteDb {
     return Promise.resolve(Array.from(this.context.idToTopic.values()));
   }
 
-  readMessages(opts: SqliteMessageReadOptions = {}): AsyncIterableIterator<RawMessage> {
+  readMessages(opts: MessageReadOptions = {}): AsyncIterableIterator<RawMessage> {
     if (this.context == undefined) {
       throw new Error(`Call open() before reading messages`);
     }
@@ -134,7 +134,7 @@ export class SqliteNodejs implements SqliteDb {
 
     const statement = db.prepare(query);
     const iterator = statement.iterate(args) as IterableIterator<MessageRow>;
-    return new MessageIterator(iterator, idToTopic);
+    return new RawMessageIterator(iterator, idToTopic);
   }
 
   timeRange(): Promise<[min: Time, max: Time]> {

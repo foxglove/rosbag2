@@ -1,15 +1,9 @@
 import { Time, fromNanoSec, toNanoSec } from "@foxglove/rostime";
 import initSqlJs, { Database, Statement } from "sql.js";
 
-import { MessageIterator, MessageRow } from "../MessageIterator";
+import { RawMessageIterator, MessageRow } from "../RawMessageIterator";
 import { parseQosProfiles } from "../metadata";
-import type {
-  Filelike,
-  RawMessage,
-  SqliteDb,
-  SqliteMessageReadOptions,
-  TopicDefinition,
-} from "../types";
+import type { Filelike, RawMessage, SqliteDb, MessageReadOptions, TopicDefinition } from "../types";
 
 type DbContext = {
   db: Database;
@@ -68,7 +62,7 @@ export class SqliteSqljs implements SqliteDb {
     return Promise.resolve(Array.from(this.context.idToTopic.values()));
   }
 
-  readMessages(opts: SqliteMessageReadOptions): AsyncIterableIterator<RawMessage> {
+  readMessages(opts: MessageReadOptions): AsyncIterableIterator<RawMessage> {
     if (this.context == undefined) {
       throw new Error(`Call open() before reading messages`);
     }
@@ -128,7 +122,7 @@ export class SqliteSqljs implements SqliteDb {
 
     const statement = db.prepare(query, args);
     const dbIterator = new SqlJsMessageRowIterator(statement);
-    return new MessageIterator(dbIterator, new Map());
+    return new RawMessageIterator(dbIterator, new Map());
   }
 
   timeRange(): Promise<[min: Time, max: Time]> {
