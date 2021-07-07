@@ -1,3 +1,6 @@
+import { RosMsgDefinition } from "@foxglove/rosmsg";
+import { definitions } from "@foxglove/rosmsg-msgs-common";
+import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { Time, isLessThan as isTimeLessThan } from "@foxglove/rostime";
 import path from "path";
 
@@ -15,10 +18,50 @@ import {
 
 type SqliteDbFactory = (fileEntry: FileEntry) => SqliteDb;
 
+const ROS2_TO_DEFINITIONS = new Map<string, RosMsgDefinition>();
+const DEFINITIONS_ARRAY: RosMsgDefinition[] = [];
+
+// New ROS2 header message definition
+definitions["std_msgs/Header"] = {
+  name: "std_msgs/Header",
+  definitions: [
+    { type: "time", isArray: false, name: "stamp", isComplex: false },
+    { type: "string", isArray: false, name: "frame_id", isComplex: false },
+  ],
+};
+
+// Handle the datatype naming difference used in rosbag2 (but not the .msg files)
+for (const ros1Datatype in definitions) {
+  const ros2Datatype = ros1Datatype.replace("_msgs/", "_msgs/msg/");
+  const msgdef = (definitions as Record<string, RosMsgDefinition>)[ros1Datatype]!;
+  DEFINITIONS_ARRAY.push(msgdef);
+  ROS2_TO_DEFINITIONS.set(ros2Datatype, msgdef);
+}
+
+// New ROS2 log message definition
+ROS2_TO_DEFINITIONS.set("rcl_interfaces/msg/Log", {
+  name: "rcl_interfaces/msg/Log",
+  definitions: [
+    { type: "int8", name: "DEBUG", isConstant: true, value: 1 },
+    { type: "int8", name: "INFO", isConstant: true, value: 2 },
+    { type: "int8", name: "WARN", isConstant: true, value: 4 },
+    { type: "int8", name: "ERROR", isConstant: true, value: 8 },
+    { type: "int8", name: "FATAL", isConstant: true, value: 16 },
+    { type: "time", isArray: false, name: "stamp", isComplex: false },
+    { type: "uint8", isArray: false, name: "level", isComplex: false },
+    { type: "string", isArray: false, name: "name", isComplex: false },
+    { type: "string", isArray: false, name: "msg", isComplex: false },
+    { type: "string", isArray: false, name: "file", isComplex: false },
+    { type: "string", isArray: false, name: "function", isComplex: false },
+    { type: "uint32", isArray: false, name: "line", isComplex: false },
+  ],
+});
+
 export class Rosbag2 {
   readonly baseDir: string;
   readonly files: Readonly<Map<string, FileEntry>>;
-  private sqliteDbFactory: SqliteDbFactory;
+  private sqliteDbFactory_: SqliteDbFactory;
+  private messageReaders_ = new Map<string, MessageReader>();
   private metadata_?: Metadata;
   private databases_?: SqliteDb[];
 
@@ -31,7 +74,7 @@ export class Rosbag2 {
     this.files = new Map<string, FileEntry>(
       files.map((f) => [path.relative(".", f.relativePath), f]),
     );
-    this.sqliteDbFactory = sqliteDbFactory;
+    this.sqliteDbFactory_ = sqliteDbFactory;
   }
 
   async open(): Promise<void> {
@@ -47,7 +90,7 @@ export class Rosbag2 {
     const dbFiles =
       this.getFiles(this.metadata_?.relativeFilePaths) ??
       Array.from(this.files.values()).filter((entry) => entry.relativePath.endsWith(".db3"));
-    this.databases_ = dbFiles.map((entry) => this.sqliteDbFactory(entry));
+    this.databases_ = dbFiles.map((entry) => this.sqliteDbFactory_(entry));
 
     for (const db of this.databases_) {
       await db.open();
@@ -142,12 +185,18 @@ export class Rosbag2 {
   }
 
   private decodeMessage = (rawMessage: RawMessage): unknown => {
-    const metadata = this.metadata_;
-    if (metadata == undefined) {
-      throw new Error("Cannot decode messages before opening rosbag");
+    // Find or create a message reader for this message
+    let reader = this.messageReaders_.get(rawMessage.topic.type);
+    if (reader == undefined) {
+      const msgdef = ROS2_TO_DEFINITIONS.get(rawMessage.topic.type);
+      if (msgdef == undefined) {
+        throw new Error(`Unknown message type: ${rawMessage.topic.type}`);
+      }
+      reader = new MessageReader([msgdef, ...DEFINITIONS_ARRAY]);
+      this.messageReaders_.set(rawMessage.topic.type, reader);
     }
 
-    return undefined;
+    return reader.readMessage(rawMessage.data);
   };
 }
 

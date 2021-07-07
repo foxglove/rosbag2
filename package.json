@@ -67,7 +67,8 @@
     "typescript": "4.3.4"
   },
   "dependencies": {
-    "@foxglove/rosmsg2-serialization": "file:../rosmsg2-serialization",
+    "@foxglove/rosmsg-msgs-common": "^1.0.0",
+    "@foxglove/rosmsg2-serialization": "^0.2.0",
     "js-yaml": "^4.1.0"
   },
   "peerDependencies": {

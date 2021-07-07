@@ -1,6 +1,11 @@
 import type { Message, RawMessage } from "./types";
 
 type MessageDecoder = (rawMessage: RawMessage) => unknown;
+
+/**
+ * MessageIterator is a helper class to convert raw table rows into Message instances as an
+ * asynchronous iterator.
+ */
 export class MessageIterator implements AsyncIterableIterator<Message> {
   private rowIterators: AsyncIterableIterator<RawMessage>[];
   private decoder?: MessageDecoder;

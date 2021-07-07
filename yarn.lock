@@ -352,17 +352,34 @@
   resolved "https://registry.yarnpkg.com/@foxglove/eslint-plugin/-/eslint-plugin-0.10.0.tgz#11592a1d87b7b71b97ca51027b3bd3fe32877dc7"
   integrity sha512-Lrt0elHfjOId8zRdIjUvk3Dd3e6Ii2LZLxKrtV4ancyvWFnNl3MaPNmFooPkMw01MhcDRYtZr5DvbcGVyCm+SQ==
 
-"@foxglove/rosmsg2-serialization@file:../rosmsg2-serialization":
-  version "0.0.0"
+"@foxglove/rosmsg-msgs-common@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@foxglove/rosmsg-msgs-common/-/rosmsg-msgs-common-1.0.0.tgz#c70a8df392bcf39d1e01a7786060391eea6b0ec8"
+  integrity sha512-g7jis5MaYCRY9dwZdscJvBXOHe3en4E4wry9LdjbMJi/ER3roDafr0xjFbDtwlzIqCi+pTs6RtoQ0TsEPCgpdg==
+  dependencies:
+    "@foxglove/rosmsg" "^0.1.2"
+
+"@foxglove/rosmsg2-serialization@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@foxglove/rosmsg2-serialization/-/rosmsg2-serialization-0.2.0.tgz#3e590069d3c990d787feaa0b39c45aa475effac0"
+  integrity sha512-srM0Nzl5RT0lCnmBM/tz1k2LhEhQxNivwGi2QvuqsSD2LU5L1gww1BgRgna0UH8T/PloUvm58758zqh2MW26ww==
   dependencies:
     "@foxglove/cdr" "^0.2.1"
-    "@foxglove/rosmsg" "^0.1.1"
+    "@foxglove/rosmsg" "^0.2.0"
     "@foxglove/rostime" "^1.1.0"
 
-"@foxglove/rosmsg@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@foxglove/rosmsg/-/rosmsg-0.1.1.tgz#9469ff413db965ae9d60e609b691ddd40992a26e"
-  integrity sha512-EG8Xrp0R9qZ21mtb8SX7iNrTGas6jRx7jYvqNYmUdbBYVroujy2Sus7ek35cKeOt1kKJFlzCHOUDBy7gdt1k1A==
+"@foxglove/rosmsg@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@foxglove/rosmsg/-/rosmsg-0.1.2.tgz#44484b99e1e4f8271203c8aa8db21936424332f8"
+  integrity sha512-N7F3yTB5Y/HV0JDIGj7iRmYSpWVFGXDOXeTgYOjmBhjooXQA4IX0kyrHHrj3iyD1VB3NlmkJXj/0LHS70NXHVw==
+  dependencies:
+    moo "^0.5.1"
+    nearley "^2.20.1"
+
+"@foxglove/rosmsg@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@foxglove/rosmsg/-/rosmsg-0.2.0.tgz#641d5ed04bc0c6974735436077c48f49a1e22343"
+  integrity sha512-jNIefCCZFiCuX8F70/BP5xOdG8KJdN0yuPlSJ8Eva6aU9T+sD5NBJZKfJVPpSp91a8G/pmWXAZ07hbQ9mqKa1w==
   dependencies:
     moo "^0.5.1"
     nearley "^2.20.1"
