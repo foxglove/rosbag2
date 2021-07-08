@@ -24,7 +24,8 @@
     "email": "support@foxglove.dev"
   },
   "homepage": "https://github.com/foxglove/rosbag2",
-  "main": "dist/index.js",
+  "main": "dist/nodejs/index.js",
+  "browser": "dist/web/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
@@ -51,6 +52,7 @@
     "@types/prettier": "2.3.0",
     "@types/sql.js": "^1.4.2",
     "@types/wicg-entries-api": "^2020.8.0",
+    "@types/wicg-file-system-access": "^2020.9.2",
     "@typescript-eslint/eslint-plugin": "4.28.0",
     "@typescript-eslint/parser": "4.28.0",
     "better-sqlite3": "^7.4.1",

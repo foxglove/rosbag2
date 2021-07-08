@@ -2,7 +2,7 @@ import { Time, add as addTimes, isGreaterThan, isTimeInRangeInclusive } from "@f
 import path from "path";
 
 import { Rosbag2 } from "./Rosbag2";
-import { SqliteNodejs, open as openNodejs } from "./nodejs";
+import { SqliteNodejs, openNodejsDirectory } from "./nodejs";
 
 const BAG_START: Time = { sec: 1585866235, nsec: 112411371 };
 const BAG_END: Time = { sec: 1585866239, nsec: 643508139 };
@@ -17,7 +17,7 @@ describe("SqliteNodejs single bag handling", () => {
 
   it("reads messages", async () => {
     const bagPath = path.join(__dirname, "..", "tests", "bags", "talker");
-    const bag = await openNodejs(bagPath);
+    const bag = await openNodejsDirectory(bagPath);
 
     expect(bag.baseDir).toEqual(bagPath);
     expect(bag.files.size).toEqual(4);
@@ -53,7 +53,7 @@ describe("SqliteNodejs single bag handling", () => {
 
   it("reads start/end times", async () => {
     const bagPath = path.join(__dirname, "..", "tests", "bags", "talker");
-    const bag = await openNodejs(bagPath);
+    const bag = await openNodejsDirectory(bagPath);
 
     expect(bag.metadata).toBeDefined();
     expect(bag.metadata!.startingTime).toEqual(BAG_START);
@@ -66,7 +66,7 @@ describe("SqliteNodejs single bag handling", () => {
 
   it("reads the topic list", async () => {
     const bagPath = path.join(__dirname, "..", "tests", "bags", "talker");
-    const bag = await openNodejs(bagPath);
+    const bag = await openNodejsDirectory(bagPath);
 
     const topics = await bag.readTopics();
     expect(topics.length).toEqual(3);
@@ -77,7 +77,7 @@ describe("SqliteNodejs single bag handling", () => {
 
   it("reads the topic list", async () => {
     const bagPath = path.join(__dirname, "..", "tests", "bags", "talker");
-    const bag = await openNodejs(bagPath);
+    const bag = await openNodejsDirectory(bagPath);
 
     const counts = await bag.messageCounts();
     expect(counts.size).toEqual(2);
