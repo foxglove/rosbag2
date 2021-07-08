@@ -1,7 +1,7 @@
 {
   "name": "@foxglove/rosbag2",
   "version": "0.0.0",
-  "description": "ROS2 (Robot Operating System) bag reader and writer",
+  "description": "ROS2 (Robot Operating System) bag reader and writer abstract implementation",
   "license": "MIT",
   "keywords": [
     "ros",
@@ -24,8 +24,7 @@
     "email": "support@foxglove.dev"
   },
   "homepage": "https://github.com/foxglove/rosbag2",
-  "main": "dist/nodejs/index.js",
-  "browser": "dist/web/index.js",
+  "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
@@ -39,23 +38,15 @@
     "prepublishOnly": "yarn lint:ci && yarn test",
     "test": "jest"
   },
-  "engines": {
-    "node": ">= 14"
-  },
   "devDependencies": {
     "@foxglove/eslint-plugin": "0.10.0",
-    "@types/better-sqlite3": "^5.4.2",
     "@types/eslint": "^7",
     "@types/eslint-plugin-prettier": "^3",
     "@types/jest": "^26.0.23",
     "@types/js-yaml": "^4.0.1",
     "@types/prettier": "2.3.0",
-    "@types/sql.js": "^1.4.2",
-    "@types/wicg-entries-api": "^2020.8.0",
-    "@types/wicg-file-system-access": "^2020.9.2",
     "@typescript-eslint/eslint-plugin": "4.28.0",
     "@typescript-eslint/parser": "4.28.0",
-    "better-sqlite3": "^7.4.1",
     "esbuild": "0.12.12",
     "esbuild-jest": "0.5.0",
     "eslint": "7.29.0",
@@ -65,16 +56,12 @@
     "eslint-plugin-prettier": "3.4.0",
     "jest": "27.0.5",
     "prettier": "2.3.1",
-    "sql.js": "^1.5.0",
     "typescript": "4.3.4"
   },
   "dependencies": {
     "@foxglove/rosmsg-msgs-common": "^1.0.0",
     "@foxglove/rosmsg2-serialization": "^0.2.0",
+    "@foxglove/rostime": "^1.1.0",
     "js-yaml": "^4.1.0"
-  },
-  "peerDependencies": {
-    "better-sqlite3": "^7.4.1",
-    "sql.js": "^1.5.0"
   }
 }

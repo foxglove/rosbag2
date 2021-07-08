@@ -1,4 +1,5 @@
 env:
+  shared-node-browser: true
   es2020: true
 
 ignorePatterns:

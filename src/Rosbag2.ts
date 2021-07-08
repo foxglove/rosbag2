@@ -97,6 +97,17 @@ export class Rosbag2 {
     }
   }
 
+  async close(): Promise<void> {
+    this.metadata_ = undefined;
+
+    if (this.databases_ != undefined) {
+      for (const db of this.databases_) {
+        await db.close();
+      }
+    }
+    this.databases_ = undefined;
+  }
+
   readTopics(): Promise<TopicDefinition[]> {
     if (this.databases_ == undefined) {
       throw new Error("Cannot read topics before opening rosbag");

@@ -99,6 +99,7 @@ export interface FileEntry {
 
 export interface SqliteDb {
   open(): Promise<void>;
+  close(): Promise<void>;
   readTopics(): Promise<TopicDefinition[]>;
   readMessages(opts: MessageReadOptions): AsyncIterableIterator<RawMessage>;
   timeRange(): Promise<[min: Time, max: Time]>;
