@@ -16,10 +16,10 @@ import {
   TopicDefinition,
 } from "./types";
 
-type SqliteDbFactory = (fileEntry: FileEntry) => SqliteDb;
+export const ROS2_TO_DEFINITIONS = new Map<string, RosMsgDefinition>();
+export const ROS2_DEFINITIONS_ARRAY: RosMsgDefinition[] = [];
 
-const ROS2_TO_DEFINITIONS = new Map<string, RosMsgDefinition>();
-const DEFINITIONS_ARRAY: RosMsgDefinition[] = [];
+type SqliteDbFactory = (fileEntry: FileEntry) => SqliteDb;
 
 // New ROS2 header message definition
 definitions["std_msgs/Header"] = {
@@ -34,7 +34,7 @@ definitions["std_msgs/Header"] = {
 for (const ros1Datatype in definitions) {
   const ros2Datatype = ros1Datatype.replace("_msgs/", "_msgs/msg/");
   const msgdef = (definitions as Record<string, RosMsgDefinition>)[ros1Datatype]!;
-  DEFINITIONS_ARRAY.push(msgdef);
+  ROS2_DEFINITIONS_ARRAY.push(msgdef);
   ROS2_TO_DEFINITIONS.set(ros2Datatype, msgdef);
 }
 
@@ -208,7 +208,7 @@ export class Rosbag2 {
       if (msgdef == undefined) {
         throw new Error(`Unknown message type: ${rawMessage.topic.type}`);
       }
-      reader = new MessageReader([msgdef, ...DEFINITIONS_ARRAY]);
+      reader = new MessageReader([msgdef, ...ROS2_DEFINITIONS_ARRAY]);
       this.messageReaders_.set(rawMessage.topic.type, reader);
     }
 
