@@ -1,4 +1,4 @@
-# rosbag2
+# @foxglove/rosbag2
 
 > _ROS2 (Robot Operating System) bag reader and writer abstract implementation_
 
