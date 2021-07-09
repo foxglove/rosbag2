@@ -88,6 +88,7 @@ export interface Filelike {
   read(offset?: number, length?: number): Promise<Uint8Array>;
   readAsText(): Promise<string>;
   size(): Promise<number>;
+  close(): Promise<void>;
 }
 
 export interface FileEntry {

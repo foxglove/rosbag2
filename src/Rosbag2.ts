@@ -83,6 +83,7 @@ export class Rosbag2 {
       throw new Error(`Cannot construct Rosbag2Reader without metadata.yaml`);
     }
     const metadataStr = await metadataFile.file.readAsText();
+    await metadataFile.file.close();
 
     this.metadata_ = parseMetadata(metadataStr);
 
@@ -106,6 +107,10 @@ export class Rosbag2 {
       }
     }
     this.databases_ = undefined;
+
+    for (const { file } of this.files.values()) {
+      await file.close();
+    }
   }
 
   readTopics(): Promise<TopicDefinition[]> {
