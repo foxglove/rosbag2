@@ -21,10 +21,10 @@ export class RawMessageIterator implements AsyncIterableIterator<RawMessage> {
     return this;
   }
 
-  next(): Promise<IteratorResult<RawMessage>> {
+  async next(): Promise<IteratorResult<RawMessage>> {
     const res = this.dbIterator.next();
     if (res.done === true) {
-      return Promise.resolve({ value: undefined, done: true });
+      return { value: undefined, done: true };
     } else {
       const row = res.value;
 
@@ -36,7 +36,7 @@ export class RawMessageIterator implements AsyncIterableIterator<RawMessage> {
 
       const timestamp = fromNanoSec(row.timestamp);
       const value: RawMessage = { topic, timestamp, data: row.data };
-      return Promise.resolve({ value, done: false });
+      return { value, done: false };
     }
   }
 }

@@ -113,17 +113,17 @@ export class Rosbag2 {
     }
   }
 
-  readTopics(): Promise<TopicDefinition[]> {
+  async readTopics(): Promise<TopicDefinition[]> {
     if (this.databases_ == undefined) {
       throw new Error("Cannot read topics before opening rosbag");
     }
 
     if (this.databases_.length === 0) {
-      return Promise.resolve([]);
+      return [];
     }
 
     const firstDb = this.databases_[0]!;
-    return firstDb.readTopics();
+    return await firstDb.readTopics();
   }
 
   readMessages(opts: MessageReadOptions = {}): AsyncIterableIterator<Message> {
