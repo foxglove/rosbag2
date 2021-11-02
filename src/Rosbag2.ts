@@ -58,7 +58,6 @@ ROS2_TO_DEFINITIONS.set("rcl_interfaces/msg/Log", {
 });
 
 export class Rosbag2 {
-  readonly baseDir: string;
   readonly files: Readonly<Map<string, FileEntry>>;
   private sqliteDbFactory_: SqliteDbFactory;
   private messageReaders_ = new Map<string, MessageReader>();
@@ -69,8 +68,7 @@ export class Rosbag2 {
     return this.metadata_;
   }
 
-  constructor(baseDir: string, files: FileEntry[], sqliteDbFactory: SqliteDbFactory) {
-    this.baseDir = baseDir;
+  constructor(files: FileEntry[], sqliteDbFactory: SqliteDbFactory) {
     this.files = new Map<string, FileEntry>(
       files.map((f) => [path.relative(".", f.relativePath), f]),
     );
@@ -79,15 +77,15 @@ export class Rosbag2 {
 
   async open(): Promise<void> {
     const metadataFile = this.files.get("metadata.yaml");
-    if (metadataFile == undefined) {
-      throw new Error(`Cannot construct Rosbag2Reader without metadata.yaml`);
+    if (metadataFile) {
+      const metadataStr = await metadataFile.file.readAsText();
+      await metadataFile.file.close();
+      this.metadata_ = parseMetadata(metadataStr);
+    } else {
+      this.metadata_ = undefined;
     }
-    const metadataStr = await metadataFile.file.readAsText();
-    await metadataFile.file.close();
 
-    this.metadata_ = parseMetadata(metadataStr);
-
-    // Fall back to loading all .db3 files in the rosbag directory
+    // Fall back to loading all passed in .db3 files
     const dbFiles =
       this.getFiles(this.metadata_?.relativeFilePaths) ??
       Array.from(this.files.values()).filter((entry) => entry.relativePath.endsWith(".db3"));
