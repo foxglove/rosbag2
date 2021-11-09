@@ -31,7 +31,8 @@ export enum QosPolicyReliability {
 export type Message = {
   topic: Readonly<TopicDefinition>;
   timestamp: Time;
-  data: unknown;
+  data: Uint8Array;
+  value: unknown;
 };
 
 export type MessageReadOptions = {
