@@ -29,15 +29,12 @@ export class MessageIterator implements AsyncIterableIterator<Message> {
       }
 
       const rawMessage = res.value;
+      const { topic, timestamp, data } = rawMessage;
       if (this.decoder == undefined) {
-        return { value: rawMessage, done: false };
+        return { value: { topic, timestamp, data, value: undefined }, done: false };
       }
 
-      const value: Message = {
-        topic: rawMessage.topic,
-        timestamp: rawMessage.timestamp,
-        data: this.decoder(rawMessage),
-      };
+      const value: Message = { topic, timestamp, data, value: this.decoder(rawMessage) };
       return { value, done: false };
     }
 
