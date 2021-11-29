@@ -95,7 +95,7 @@ export function parseMetadata(data: string): Metadata | undefined {
  */
 export function parseQosProfiles(data: string): QosProfile[] {
   const parsed = parseYaml(data);
-  return Array.isArray(parsed) ? getQosProfiles(parsed) : [];
+  return Array.isArray(parsed) ? getQosProfiles(parsed as Obj[]) : [];
 }
 
 function getTopicAndCount(obj: Obj): TopicAndCount | undefined {
