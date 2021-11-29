@@ -1,6 +1,6 @@
 {
   "name": "@foxglove/rosbag2",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "ROS2 (Robot Operating System) bag reader and writer abstract implementation",
   "license": "MIT",
   "keywords": [
