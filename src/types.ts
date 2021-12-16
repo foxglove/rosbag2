@@ -83,20 +83,6 @@ export type RawMessage = {
   data: Uint8Array;
 };
 
-// Filesystem interfaces
-
-export interface Filelike {
-  read(offset?: number, length?: number): Promise<Uint8Array>;
-  readAsText(): Promise<string>;
-  size(): Promise<number>;
-  close(): Promise<void>;
-}
-
-export interface FileEntry {
-  relativePath: string;
-  file: Filelike;
-}
-
 // Sqlite interfaces
 
 export interface SqliteDb {
