@@ -42,20 +42,6 @@ export type MessageReadOptions = {
   rawMessages?: boolean;
 };
 
-// Bag metadata
-
-export type Metadata = {
-  version?: number;
-  storageIdentifier?: "sqlite3" | string;
-  relativeFilePaths: string[];
-  duration?: Duration;
-  startingTime?: Time;
-  messageCount?: number;
-  topicsWithMessageCount: { topic: TopicDefinition; messageCount: number }[];
-  compressionFormat?: string;
-  compressionMode?: string;
-};
-
 // Topic and Message interfaces
 
 export type QosProfile = {

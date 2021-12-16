@@ -4,14 +4,7 @@ import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { Time, isLessThan as isTimeLessThan } from "@foxglove/rostime";
 
 import { MessageIterator } from "./MessageIterator";
-import {
-  Message,
-  MessageReadOptions,
-  Metadata,
-  RawMessage,
-  SqliteDb,
-  TopicDefinition,
-} from "./types";
+import { Message, MessageReadOptions, RawMessage, SqliteDb, TopicDefinition } from "./types";
 
 export const ROS2_TO_DEFINITIONS = new Map<string, RosMsgDefinition>();
 export const ROS2_DEFINITIONS_ARRAY: RosMsgDefinition[] = [];
@@ -54,12 +47,7 @@ ROS2_TO_DEFINITIONS.set("rcl_interfaces/msg/Log", {
 
 export class Rosbag2 {
   private messageReaders_ = new Map<string, MessageReader>();
-  private metadata_?: Metadata;
   private databases_: SqliteDb[];
-
-  get metadata(): Metadata | undefined {
-    return this.metadata_;
-  }
 
   constructor(files: SqliteDb[]) {
     this.databases_ = files;
@@ -72,8 +60,6 @@ export class Rosbag2 {
   }
 
   async close(): Promise<void> {
-    this.metadata_ = undefined;
-
     if (this.databases_ != undefined) {
       for (const db of this.databases_) {
         await db.close();
