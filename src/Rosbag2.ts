@@ -1,25 +1,13 @@
-import { RosMsgDefinition } from "@foxglove/rosmsg";
+import type { RosMsgDefinition } from "@foxglove/rosmsg";
 import { definitions } from "@foxglove/rosmsg-msgs-common";
 import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { Time, isLessThan as isTimeLessThan } from "@foxglove/rostime";
-import path from "path";
 
 import { MessageIterator } from "./MessageIterator";
-import { parseMetadata } from "./metadata";
-import {
-  FileEntry,
-  Message,
-  MessageReadOptions,
-  Metadata,
-  RawMessage,
-  SqliteDb,
-  TopicDefinition,
-} from "./types";
+import { Message, MessageReadOptions, RawMessage, SqliteDb, TopicDefinition } from "./types";
 
 export const ROS2_TO_DEFINITIONS = new Map<string, RosMsgDefinition>();
 export const ROS2_DEFINITIONS_ARRAY: RosMsgDefinition[] = [];
-
-type SqliteDbFactory = (fileEntry: FileEntry) => SqliteDb;
 
 // New ROS2 header message definition
 definitions["std_msgs/Header"] = {
@@ -58,57 +46,26 @@ ROS2_TO_DEFINITIONS.set("rcl_interfaces/msg/Log", {
 });
 
 export class Rosbag2 {
-  readonly files: Readonly<Map<string, FileEntry>>;
-  private sqliteDbFactory_: SqliteDbFactory;
   private messageReaders_ = new Map<string, MessageReader>();
-  private metadata_?: Metadata;
-  private databases_?: SqliteDb[];
+  private databases_: SqliteDb[];
 
-  get metadata(): Metadata | undefined {
-    return this.metadata_;
-  }
-
-  constructor(files: FileEntry[], sqliteDbFactory: SqliteDbFactory) {
-    this.files = new Map<string, FileEntry>(
-      files.map((f) => [path.relative(".", f.relativePath), f]),
-    );
-    this.sqliteDbFactory_ = sqliteDbFactory;
+  constructor(files: SqliteDb[]) {
+    this.databases_ = files;
   }
 
   async open(): Promise<void> {
-    const metadataFile = this.files.get("metadata.yaml");
-    if (metadataFile) {
-      const metadataStr = await metadataFile.file.readAsText();
-      await metadataFile.file.close();
-      this.metadata_ = parseMetadata(metadataStr);
-    } else {
-      this.metadata_ = undefined;
-    }
-
-    // Fall back to loading all passed in .db3 files
-    const dbFiles =
-      this.getFiles(this.metadata_?.relativeFilePaths) ??
-      Array.from(this.files.values()).filter((entry) => entry.relativePath.endsWith(".db3"));
-    this.databases_ = dbFiles.map((entry) => this.sqliteDbFactory_(entry));
-
     for (const db of this.databases_) {
       await db.open();
     }
   }
 
   async close(): Promise<void> {
-    this.metadata_ = undefined;
-
     if (this.databases_ != undefined) {
       for (const db of this.databases_) {
         await db.close();
       }
     }
-    this.databases_ = undefined;
-
-    for (const { file } of this.files.values()) {
-      await file.close();
-    }
+    this.databases_ = [];
   }
 
   async readTopics(): Promise<TopicDefinition[]> {
@@ -179,23 +136,6 @@ export class Rosbag2 {
       }
     }
     return allCounts;
-  }
-
-  private getFiles(relativePaths?: string[]): FileEntry[] | undefined {
-    if (relativePaths == undefined) {
-      return undefined;
-    }
-
-    const entries: FileEntry[] = [];
-    for (const relativePath of relativePaths) {
-      const normalizedPath = path.relative(".", relativePath);
-      const entry = this.files.get(normalizedPath);
-      if (entry != undefined) {
-        entries.push(entry);
-      }
-    }
-
-    return entries.length > 0 ? entries : undefined;
   }
 
   private decodeMessage = (rawMessage: RawMessage): unknown => {

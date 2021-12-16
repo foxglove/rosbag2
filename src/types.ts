@@ -42,20 +42,6 @@ export type MessageReadOptions = {
   rawMessages?: boolean;
 };
 
-// Bag metadata
-
-export type Metadata = {
-  version?: number;
-  storageIdentifier?: "sqlite3" | string;
-  relativeFilePaths: string[];
-  duration?: Duration;
-  startingTime?: Time;
-  messageCount?: number;
-  topicsWithMessageCount: { topic: TopicDefinition; messageCount: number }[];
-  compressionFormat?: string;
-  compressionMode?: string;
-};
-
 // Topic and Message interfaces
 
 export type QosProfile = {
@@ -82,20 +68,6 @@ export type RawMessage = {
   timestamp: Time;
   data: Uint8Array;
 };
-
-// Filesystem interfaces
-
-export interface Filelike {
-  read(offset?: number, length?: number): Promise<Uint8Array>;
-  readAsText(): Promise<string>;
-  size(): Promise<number>;
-  close(): Promise<void>;
-}
-
-export interface FileEntry {
-  relativePath: string;
-  file: Filelike;
-}
 
 // Sqlite interfaces
 
