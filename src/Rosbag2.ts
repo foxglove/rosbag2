@@ -1,5 +1,6 @@
 import type { RosMsgDefinition } from "@foxglove/rosmsg";
-import { definitions } from "@foxglove/rosmsg-msgs-common";
+import { definitions as commonDefs } from "@foxglove/rosmsg-msgs-common";
+import { definitions as foxgloveDefs } from "@foxglove/rosmsg-msgs-foxglove";
 import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { Time, isLessThan as isTimeLessThan } from "@foxglove/rostime";
 
@@ -10,7 +11,7 @@ export const ROS2_TO_DEFINITIONS = new Map<string, RosMsgDefinition>();
 export const ROS2_DEFINITIONS_ARRAY: RosMsgDefinition[] = [];
 
 // New ROS2 header message definition
-definitions["std_msgs/Header"] = {
+commonDefs["std_msgs/Header"] = {
   name: "std_msgs/Header",
   definitions: [
     { type: "time", isArray: false, name: "stamp", isComplex: false },
@@ -19,11 +20,19 @@ definitions["std_msgs/Header"] = {
 };
 
 // Handle the datatype naming difference used in rosbag2 (but not the .msg files)
-for (const ros1Datatype in definitions) {
+for (const ros1Datatype in commonDefs) {
   const ros2Datatype = ros1Datatype.replace("_msgs/", "_msgs/msg/");
-  const msgdef = (definitions as Record<string, RosMsgDefinition>)[ros1Datatype]!;
+  const msgdef = (commonDefs as Record<string, RosMsgDefinition>)[ros1Datatype]!;
   ROS2_DEFINITIONS_ARRAY.push(msgdef);
   ROS2_TO_DEFINITIONS.set(ros2Datatype, msgdef);
+}
+for (const ros1Datatype in foxgloveDefs) {
+  const ros2Datatype = ros1Datatype.replace("_msgs/", "_msgs/msg/");
+  if (!ROS2_TO_DEFINITIONS.has(ros2Datatype)) {
+    const msgdef = (foxgloveDefs as Record<string, RosMsgDefinition>)[ros1Datatype]!;
+    ROS2_DEFINITIONS_ARRAY.push(msgdef);
+    ROS2_TO_DEFINITIONS.set(ros2Datatype, msgdef);
+  }
 }
 
 // New ROS2 log message definition

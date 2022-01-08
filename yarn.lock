@@ -341,6 +341,13 @@
   dependencies:
     "@foxglove/rosmsg" "^2.0.0 || ^3.0.0"
 
+"@foxglove/rosmsg-msgs-foxglove@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@foxglove/rosmsg-msgs-foxglove/-/rosmsg-msgs-foxglove-2.0.3.tgz#53c248f5203c7f748c3e7507504071ca4058d1a6"
+  integrity sha512-4YHSwazNLqjl84oc46ieoF3m0PQGcDtvQp4wGeyDD9X1//zvkK3Bb4mgnV0LC2U8OdBYiNQQy4eQaVnfVc5t8A==
+  dependencies:
+    "@foxglove/rosmsg" "^2.0.0 || ^3.0.0"
+
 "@foxglove/rosmsg2-serialization@^1.0.5":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@foxglove/rosmsg2-serialization/-/rosmsg2-serialization-1.0.5.tgz#a0c4954c43ef5a9a2012e57be94e5f3a65d0a35f"
