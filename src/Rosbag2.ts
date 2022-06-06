@@ -1,8 +1,8 @@
 import type { RosMsgDefinition } from "@foxglove/rosmsg";
 import { definitions as commonDefs } from "@foxglove/rosmsg-msgs-common";
-import { definitions as foxgloveDefs } from "@foxglove/rosmsg-msgs-foxglove";
 import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { Time, isLessThan as isTimeLessThan } from "@foxglove/rostime";
+import { foxgloveMessageSchemas, generateRosMsgDefinition } from "@foxglove/schemas";
 
 import { MessageIterator } from "./MessageIterator";
 import { Message, MessageReadOptions, RawMessage, SqliteDb, TopicDefinition } from "./types";
@@ -26,10 +26,21 @@ for (const ros1Datatype in commonDefs) {
   ROS2_DEFINITIONS_ARRAY.push(msgdef);
   ROS2_TO_DEFINITIONS.set(ros2Datatype, msgdef);
 }
-for (const ros1Datatype in foxgloveDefs) {
-  const ros2Datatype = ros1Datatype.replace("_msgs/", "_msgs/msg/");
+
+const imageMarkerArray: RosMsgDefinition = {
+  name: "foxglove_msgs/ImageMarkerArray",
+  definitions: [
+    { type: "visualization_msgs/ImageMarker", isArray: true, name: "markers", isComplex: true },
+  ],
+};
+ROS2_DEFINITIONS_ARRAY.push(imageMarkerArray);
+ROS2_TO_DEFINITIONS.set("foxglove_msgs/msg/ImageMarkerArray", imageMarkerArray);
+
+for (const schema of Object.values(foxgloveMessageSchemas)) {
+  const { qualifiedRosName, fields } = generateRosMsgDefinition(schema, { rosVersion: 2 });
+  const ros2Datatype = qualifiedRosName.replace("_msgs/", "_msgs/msg/");
+  const msgdef: RosMsgDefinition = { name: qualifiedRosName, definitions: fields };
   if (!ROS2_TO_DEFINITIONS.has(ros2Datatype)) {
-    const msgdef = (foxgloveDefs as Record<string, RosMsgDefinition>)[ros1Datatype]!;
     ROS2_DEFINITIONS_ARRAY.push(msgdef);
     ROS2_TO_DEFINITIONS.set(ros2Datatype, msgdef);
   }
