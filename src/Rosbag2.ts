@@ -37,12 +37,13 @@ ROS2_DEFINITIONS_ARRAY.push(imageMarkerArray);
 ROS2_TO_DEFINITIONS.set("foxglove_msgs/msg/ImageMarkerArray", imageMarkerArray);
 
 for (const schema of Object.values(foxgloveMessageSchemas)) {
-  const { qualifiedRosName, fields } = generateRosMsgDefinition(schema, { rosVersion: 2 });
-  const ros2Datatype = qualifiedRosName.replace("_msgs/", "_msgs/msg/");
-  const msgdef: RosMsgDefinition = { name: qualifiedRosName, definitions: fields };
-  if (!ROS2_TO_DEFINITIONS.has(ros2Datatype)) {
+  const { rosMsgInterfaceName, rosFullInterfaceName, fields } = generateRosMsgDefinition(schema, {
+    rosVersion: 2,
+  });
+  const msgdef: RosMsgDefinition = { name: rosMsgInterfaceName, definitions: fields };
+  if (!ROS2_TO_DEFINITIONS.has(rosFullInterfaceName)) {
     ROS2_DEFINITIONS_ARRAY.push(msgdef);
-    ROS2_TO_DEFINITIONS.set(ros2Datatype, msgdef);
+    ROS2_TO_DEFINITIONS.set(rosFullInterfaceName, msgdef);
   }
 }
 
