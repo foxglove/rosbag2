@@ -160,7 +160,7 @@ function maxTime(a: Time, b: Time): Time {
 function dataTypeToFullName(dataType: string): string {
   const parts = dataType.split("/");
   if (parts.length === 2) {
-    return `${parts[0]}/msg/${parts[1]}`;
+    return `${parts[0]!}/msg/${parts[1]!}`;
   }
   return dataType;
 }
