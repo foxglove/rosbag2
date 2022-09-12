@@ -1,5 +1,5 @@
 import type { RosMsgDefinition } from "@foxglove/rosmsg";
-import { definitions as commonDefs } from "@foxglove/rosmsg-msgs-common";
+import { ros2galactic } from "@foxglove/rosmsg-msgs-common";
 import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { Time, isLessThan as isTimeLessThan } from "@foxglove/rostime";
 import { foxgloveMessageSchemas, generateRosMsgDefinition } from "@foxglove/schemas";
@@ -10,32 +10,16 @@ import { Message, MessageReadOptions, RawMessage, SqliteDb, TopicDefinition } fr
 export const ROS2_TO_DEFINITIONS = new Map<string, RosMsgDefinition>();
 export const ROS2_DEFINITIONS_ARRAY: RosMsgDefinition[] = [];
 
-// New ROS2 header message definition
-commonDefs["std_msgs/Header"] = {
-  name: "std_msgs/Header",
-  definitions: [
-    { type: "time", isArray: false, name: "stamp", isComplex: false },
-    { type: "string", isArray: false, name: "frame_id", isComplex: false },
-  ],
-};
-
-// Handle the datatype naming difference used in rosbag2 (but not the .msg files)
-for (const ros1Datatype in commonDefs) {
-  const ros2Datatype = ros1Datatype.replace("_msgs/", "_msgs/msg/");
-  const msgdef = (commonDefs as Record<string, RosMsgDefinition>)[ros1Datatype]!;
+// Add ROS2 common message definitions (rcl_interfaces, common_interfaces, etc)
+for (const [dataType, msgdef] of Object.entries(ros2galactic)) {
   ROS2_DEFINITIONS_ARRAY.push(msgdef);
-  ROS2_TO_DEFINITIONS.set(ros2Datatype, msgdef);
+
+  // Handle the datatype naming difference used in rosbag2 (but not the .msg files)
+  const dataTypeFullName = dataType.replace("_msgs/", "_msgs/msg/");
+  ROS2_TO_DEFINITIONS.set(dataTypeFullName, msgdef);
 }
 
-const imageMarkerArray: RosMsgDefinition = {
-  name: "foxglove_msgs/ImageMarkerArray",
-  definitions: [
-    { type: "visualization_msgs/ImageMarker", isArray: true, name: "markers", isComplex: true },
-  ],
-};
-ROS2_DEFINITIONS_ARRAY.push(imageMarkerArray);
-ROS2_TO_DEFINITIONS.set("foxglove_msgs/msg/ImageMarkerArray", imageMarkerArray);
-
+// Add foxglove message definitions
 for (const schema of Object.values(foxgloveMessageSchemas)) {
   const { rosMsgInterfaceName, rosFullInterfaceName, fields } = generateRosMsgDefinition(schema, {
     rosVersion: 2,
@@ -47,24 +31,15 @@ for (const schema of Object.values(foxgloveMessageSchemas)) {
   }
 }
 
-// New ROS2 log message definition
-ROS2_TO_DEFINITIONS.set("rcl_interfaces/msg/Log", {
-  name: "rcl_interfaces/msg/Log",
+// Add the legacy foxglove_msgs/ImageMarkerArray message definition
+const imageMarkerArray: RosMsgDefinition = {
+  name: "foxglove_msgs/ImageMarkerArray",
   definitions: [
-    { type: "int8", name: "DEBUG", isConstant: true, value: 1 },
-    { type: "int8", name: "INFO", isConstant: true, value: 2 },
-    { type: "int8", name: "WARN", isConstant: true, value: 4 },
-    { type: "int8", name: "ERROR", isConstant: true, value: 8 },
-    { type: "int8", name: "FATAL", isConstant: true, value: 16 },
-    { type: "time", isArray: false, name: "stamp", isComplex: false },
-    { type: "uint8", isArray: false, name: "level", isComplex: false },
-    { type: "string", isArray: false, name: "name", isComplex: false },
-    { type: "string", isArray: false, name: "msg", isComplex: false },
-    { type: "string", isArray: false, name: "file", isComplex: false },
-    { type: "string", isArray: false, name: "function", isComplex: false },
-    { type: "uint32", isArray: false, name: "line", isComplex: false },
+    { type: "visualization_msgs/ImageMarker", isArray: true, name: "markers", isComplex: true },
   ],
-});
+};
+ROS2_DEFINITIONS_ARRAY.push(imageMarkerArray);
+ROS2_TO_DEFINITIONS.set("foxglove_msgs/msg/ImageMarkerArray", imageMarkerArray);
 
 export class Rosbag2 {
   private messageReaders_ = new Map<string, MessageReader>();
