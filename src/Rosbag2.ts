@@ -15,8 +15,7 @@ for (const [dataType, msgdef] of Object.entries(ros2galactic)) {
   ROS2_DEFINITIONS_ARRAY.push(msgdef);
 
   // Handle the datatype naming difference used in rosbag2 (but not the .msg files)
-  const dataTypeFullName = dataType.replace("_msgs/", "_msgs/msg/");
-  ROS2_TO_DEFINITIONS.set(dataTypeFullName, msgdef);
+  ROS2_TO_DEFINITIONS.set(dataTypeToFullName(dataType), msgdef);
 }
 
 // Add foxglove message definitions
@@ -156,4 +155,12 @@ function minTime(a: Time, b: Time): Time {
 
 function maxTime(a: Time, b: Time): Time {
   return isTimeLessThan(a, b) ? b : a;
+}
+
+function dataTypeToFullName(dataType: string): string {
+  const parts = dataType.split("/");
+  if (parts.length === 2) {
+    return `${parts[0]}/msg/${parts[1]}`;
+  }
+  return dataType;
 }
