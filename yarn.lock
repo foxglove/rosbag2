@@ -537,21 +537,14 @@
   dependencies:
     "@foxglove/rosmsg" "^3.1.0"
 
-"@foxglove/rosmsg2-serialization@^1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@foxglove/rosmsg2-serialization/-/rosmsg2-serialization-1.0.6.tgz#202cc24e0de01cd94b27673f873da783695db786"
-  integrity sha512-AoHpYWyc1N4BIFNuvX8qBVqr46noU9VBbZJPjskkV8xUyERyL2KcA6GXRE2Pew1nXSoUuY0KfyOdi4rGv6xGHw==
+"@foxglove/rosmsg2-serialization@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@foxglove/rosmsg2-serialization/-/rosmsg2-serialization-1.0.7.tgz#b26e7ca52e4bdd88b720f0a4b54ef320337d0077"
+  integrity sha512-jl2dptnfV9JoLOuqVNZ1BDHtTviEhJEp65Rk28rsUW1JrDWOwqEIuAORCFThDhJz8KN/dPuRXZleEph6gnl0sA==
   dependencies:
     "@foxglove/cdr" "^2.0.0"
-    "@foxglove/rosmsg" "^2.0.0 || ^3.0.0"
+    "@foxglove/rosmsg" "^3.1.0"
     "@foxglove/rostime" "^1.1.2"
-
-"@foxglove/rosmsg@^2.0.0 || ^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@foxglove/rosmsg/-/rosmsg-3.0.0.tgz#10ce39e42dab6804977cda297d0d317649184a16"
-  integrity sha512-AAb3DMlLcuntUyEDBioDhbjdbKivC1hj7Gnu7QXX8ce+R50V8xs5sfxccsjE6N0Qs+eQxuzLhT2kW3mNXT/gbg==
-  dependencies:
-    md5-typescript "^1.0.5"
 
 "@foxglove/rosmsg@^3.1.0":
   version "3.1.0"
