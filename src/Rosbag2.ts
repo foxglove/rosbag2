@@ -2,7 +2,7 @@ import type { RosMsgDefinition } from "@foxglove/rosmsg";
 import { ros2galactic } from "@foxglove/rosmsg-msgs-common";
 import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { Time, isLessThan as isTimeLessThan } from "@foxglove/rostime";
-import { foxgloveMessageSchemas, generateRosMsgDefinition } from "@foxglove/schemas";
+import { foxgloveMessageSchemas, generateRosMsgDefinition } from "@foxglove/schemas/internal";
 
 import { MessageIterator } from "./MessageIterator";
 import { Message, MessageReadOptions, RawMessage, SqliteDb, TopicDefinition } from "./types";

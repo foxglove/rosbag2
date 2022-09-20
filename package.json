@@ -1,6 +1,6 @@
 {
   "name": "@foxglove/rosbag2",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "ROS2 (Robot Operating System) bag reader and writer abstract implementation",
   "license": "MIT",
   "keywords": [
@@ -60,7 +60,7 @@
     "@foxglove/rosmsg-msgs-common": "^2.0.0",
     "@foxglove/rosmsg2-serialization": "^1.0.7",
     "@foxglove/rostime": "^1.1.2",
-    "@foxglove/schemas": "^0.6.1",
+    "@foxglove/schemas": "^0.7.0",
     "js-yaml": "^4.1.0"
   }
 }
