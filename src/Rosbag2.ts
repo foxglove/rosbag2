@@ -1,4 +1,4 @@
-import type { RosMsgDefinition } from "@foxglove/rosmsg";
+import type { MessageDefinition } from "@foxglove/message-definition";
 import { ros2galactic } from "@foxglove/rosmsg-msgs-common";
 import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { Time, isLessThan as isTimeLessThan } from "@foxglove/rostime";
@@ -7,8 +7,8 @@ import { foxgloveMessageSchemas, generateRosMsgDefinition } from "@foxglove/sche
 import { MessageIterator } from "./MessageIterator";
 import { Message, MessageReadOptions, RawMessage, SqliteDb, TopicDefinition } from "./types";
 
-export const ROS2_TO_DEFINITIONS = new Map<string, RosMsgDefinition>();
-export const ROS2_DEFINITIONS_ARRAY: RosMsgDefinition[] = [];
+export const ROS2_TO_DEFINITIONS = new Map<string, MessageDefinition>();
+export const ROS2_DEFINITIONS_ARRAY: MessageDefinition[] = [];
 
 // Add ROS2 common message definitions (rcl_interfaces, common_interfaces, etc)
 for (const [dataType, msgdef] of Object.entries(ros2galactic)) {
@@ -23,7 +23,7 @@ for (const schema of Object.values(foxgloveMessageSchemas)) {
   const { rosMsgInterfaceName, rosFullInterfaceName, fields } = generateRosMsgDefinition(schema, {
     rosVersion: 2,
   });
-  const msgdef: RosMsgDefinition = { name: rosMsgInterfaceName, definitions: fields };
+  const msgdef: MessageDefinition = { name: rosMsgInterfaceName, definitions: fields };
   if (!ROS2_TO_DEFINITIONS.has(rosFullInterfaceName)) {
     ROS2_DEFINITIONS_ARRAY.push(msgdef);
     ROS2_TO_DEFINITIONS.set(rosFullInterfaceName, msgdef);
@@ -31,7 +31,7 @@ for (const schema of Object.values(foxgloveMessageSchemas)) {
 }
 
 // Add the legacy foxglove_msgs/ImageMarkerArray message definition
-const imageMarkerArray: RosMsgDefinition = {
+const imageMarkerArray: MessageDefinition = {
   name: "foxglove_msgs/ImageMarkerArray",
   definitions: [
     { type: "visualization_msgs/ImageMarker", isArray: true, name: "markers", isComplex: true },
