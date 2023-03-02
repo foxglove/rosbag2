@@ -12,7 +12,7 @@ This package contains the subset of the full rosbag2 SQLite implementation that 
 
 ## License
 
-@foxglove/rosbag2 is licensed under [MIT License](https://opensource.org/licenses/MIT).
+@foxglove/rosbag2 is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
 ## Releasing
 
