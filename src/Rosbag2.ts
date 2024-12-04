@@ -41,33 +41,29 @@ ROS2_DEFINITIONS_ARRAY.push(imageMarkerArray);
 ROS2_TO_DEFINITIONS.set("foxglove_msgs/msg/ImageMarkerArray", imageMarkerArray);
 
 export class Rosbag2 {
+  // eslint-disable-next-line @foxglove/prefer-hash-private
   private messageReaders_ = new Map<string, MessageReader>();
+  // eslint-disable-next-line @foxglove/prefer-hash-private
   private databases_: SqliteDb[];
 
-  constructor(files: SqliteDb[]) {
+  public constructor(files: SqliteDb[]) {
     this.databases_ = files;
   }
 
-  async open(): Promise<void> {
+  public async open(): Promise<void> {
     for (const db of this.databases_) {
       await db.open();
     }
   }
 
-  async close(): Promise<void> {
-    if (this.databases_ != undefined) {
-      for (const db of this.databases_) {
-        await db.close();
-      }
+  public async close(): Promise<void> {
+    for (const db of this.databases_) {
+      await db.close();
     }
     this.databases_ = [];
   }
 
-  async readTopics(): Promise<TopicDefinition[]> {
-    if (this.databases_ == undefined) {
-      throw new Error("Cannot read topics before opening rosbag");
-    }
-
+  public async readTopics(): Promise<TopicDefinition[]> {
     if (this.databases_.length === 0) {
       return [];
     }
@@ -76,11 +72,7 @@ export class Rosbag2 {
     return await firstDb.readTopics();
   }
 
-  readMessages(opts: MessageReadOptions = {}): AsyncIterableIterator<Message> {
-    if (this.databases_ == undefined) {
-      throw new Error("Cannot read messages before opening rosbag");
-    }
-
+  public readMessages(opts: MessageReadOptions = {}): AsyncIterableIterator<Message> {
     if (this.databases_.length === 0) {
       return new MessageIterator([]);
     }
@@ -92,11 +84,7 @@ export class Rosbag2 {
     );
   }
 
-  async timeRange(): Promise<[min: Time, max: Time]> {
-    if (this.databases_ == undefined) {
-      throw new Error("Cannot read time range before opening rosbag");
-    }
-
+  public async timeRange(): Promise<[min: Time, max: Time]> {
     if (this.databases_.length === 0) {
       return [
         { sec: 0, nsec: 0 },
@@ -114,11 +102,7 @@ export class Rosbag2 {
     return [min, max];
   }
 
-  async messageCounts(): Promise<Map<string, number>> {
-    if (this.databases_ == undefined) {
-      throw new Error("Cannot read message counts before opening rosbag");
-    }
-
+  public async messageCounts(): Promise<Map<string, number>> {
     const allCounts = new Map<string, number>();
     if (this.databases_.length === 0) {
       return allCounts;
@@ -133,6 +117,7 @@ export class Rosbag2 {
     return allCounts;
   }
 
+  // eslint-disable-next-line @foxglove/prefer-hash-private
   private decodeMessage = (rawMessage: RawMessage): unknown => {
     // Find or create a message reader for this message
     let reader = this.messageReaders_.get(rawMessage.topic.type);

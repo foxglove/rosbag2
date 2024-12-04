@@ -9,19 +9,24 @@ export type MessageRow = {
 };
 
 export class RawMessageIterator implements AsyncIterableIterator<RawMessage> {
+  // eslint-disable-next-line @foxglove/prefer-hash-private
   private dbIterator: IterableIterator<MessageRow>;
+  // eslint-disable-next-line @foxglove/prefer-hash-private
   private topicsMap: Map<bigint, TopicDefinition>;
 
-  constructor(dbIterator: IterableIterator<MessageRow>, topicsMap: Map<bigint, TopicDefinition>) {
+  public constructor(
+    dbIterator: IterableIterator<MessageRow>,
+    topicsMap: Map<bigint, TopicDefinition>,
+  ) {
     this.dbIterator = dbIterator;
     this.topicsMap = topicsMap;
   }
 
-  [Symbol.asyncIterator](): AsyncIterableIterator<RawMessage> {
+  public [Symbol.asyncIterator](): AsyncIterableIterator<RawMessage> {
     return this;
   }
 
-  async next(): Promise<IteratorResult<RawMessage>> {
+  public async next(): Promise<IteratorResult<RawMessage>> {
     const res = this.dbIterator.next();
     if (res.done === true) {
       return { value: undefined, done: true };
