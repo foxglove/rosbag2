@@ -50,6 +50,7 @@ export function parseQosProfiles(data: string): QosProfile[] {
 function getQosProfiles(array: Obj[]): QosProfile[] {
   const profiles: QosProfile[] = [];
   for (const entryMaybe of array) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (entryMaybe == undefined) {
       continue;
     }
@@ -87,8 +88,8 @@ function getBoolean(obj: Obj, field: string): boolean | undefined {
   return typeof value === "boolean"
     ? value
     : typeof value === "bigint" || typeof value === "number"
-    ? Boolean(value)
-    : undefined;
+      ? Boolean(value)
+      : undefined;
 }
 
 function getDuration(obj: Obj, field: string): Duration | undefined {
