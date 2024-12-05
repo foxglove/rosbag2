@@ -1,7 +1,7 @@
 {
   "name": "@foxglove/rosbag2",
-  "version": "5.0.1",
-  "description": "ROS2 (Robot Operating System) bag reader and writer abstract implementation",
+  "version": "6.0.0",
+  "description": "ROS 2 (Robot Operating System) bag reader and writer abstract implementation",
   "license": "MIT",
   "keywords": [
     "ros",
@@ -50,10 +50,10 @@
     "typescript-eslint": "8.17.0"
   },
   "dependencies": {
-    "@foxglove/rosmsg-msgs-common": "^3.0.0",
-    "@foxglove/rosmsg2-serialization": "^2.0.0",
+    "@foxglove/rosmsg-msgs-common": "^3.2.1",
+    "@foxglove/rosmsg2-serialization": "^3.0.0",
     "@foxglove/rostime": "^1.1.2",
-    "@foxglove/schemas": "^1.3.1",
+    "@foxglove/schemas": "^1.6.5",
     "js-yaml": "^4.1.0"
   },
   "packageManager": "yarn@4.5.3"
