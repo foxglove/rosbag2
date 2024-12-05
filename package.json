@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@foxglove/rosmsg-msgs-common": "^3.2.1",
-    "@foxglove/rosmsg2-serialization": "^3.0.0",
+    "@foxglove/rosmsg2-serialization": "^3.0.1",
     "@foxglove/rostime": "^1.1.2",
     "@foxglove/schemas": "^1.6.5",
     "js-yaml": "^4.1.0"
