@@ -496,7 +496,7 @@ __metadata:
   dependencies:
     "@foxglove/eslint-plugin": "npm:2.0.0"
     "@foxglove/rosmsg-msgs-common": "npm:^3.2.1"
-    "@foxglove/rosmsg2-serialization": "npm:^3.0.0"
+    "@foxglove/rosmsg2-serialization": "npm:^3.0.1"
     "@foxglove/rostime": "npm:^1.1.2"
     "@foxglove/schemas": "npm:^1.6.5"
     "@types/jest": "npm:29.5.14"
@@ -521,14 +521,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@foxglove/rosmsg2-serialization@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@foxglove/rosmsg2-serialization@npm:3.0.0"
+"@foxglove/rosmsg2-serialization@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@foxglove/rosmsg2-serialization@npm:3.0.1"
   dependencies:
     "@foxglove/cdr": "npm:^3.3.0"
     "@foxglove/message-definition": "npm:^0.4.0"
     "@foxglove/rostime": "npm:^1.1.2"
-  checksum: 10c0/c5d285dae56761f054faed0f3c1c9ab31b5fa94281a8aad17cc6abb637f0e2484dfaf3b0b9a2731fad4958d283a483a00a36074da5d508f26d65dec19dc7e3cb
+  checksum: 10c0/8338ff8dbbc65508d7336183064d618b5b65fb756de85b071d043fd0f87f973d4f0b659d076e7903ad9a207adbf45cdb5831744fab8f0eb41a8e2a13b35721f1
   languageName: node
   linkType: hard
 
