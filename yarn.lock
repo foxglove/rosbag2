@@ -550,12 +550,12 @@ __metadata:
   linkType: hard
 
 "@foxglove/schemas@npm:^1.6.5":
-  version: 1.6.5
-  resolution: "@foxglove/schemas@npm:1.6.5"
+  version: 1.6.6
+  resolution: "@foxglove/schemas@npm:1.6.6"
   dependencies:
     "@foxglove/rosmsg-msgs-common": "npm:^3.0.0"
     tslib: "npm:^2.5.0"
-  checksum: 10c0/7f02739ccd189cbb10b9b64cd09967b78be119866879f77604de2326d9ee1f770a944ded01bdbfd9343be1475c2513c941d42daac756068c116b265f127f7371
+  checksum: 10c0/894085cc0eb0f9b3f0b7c51d1dcaea28c2375a3d8b43273d9fabdd3a737aca750fb40a747695c2a618806e709c8df07b6da6f12402a68bbb9f80bf0aaa3ac69f
   languageName: node
   linkType: hard
 
