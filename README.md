@@ -1,5 +1,8 @@
 # @foxglove/rosbag2
 
+> [!IMPORTANT]
+> This package has moved to https://github.com/foxglove/ros-typescript.
+
 > _ROS2 (Robot Operating System) legacy SQLite bag reader abstract implementation_
 
 [![npm version](https://img.shields.io/npm/v/@foxglove/rosbag2.svg?style=flat)](https://www.npmjs.com/package/@foxglove/rosbag2)
